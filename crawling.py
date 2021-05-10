@@ -1,6 +1,13 @@
 import requests, json
 from bs4 import BeautifulSoup
 
+api_key = ""
+with open('./config/keys.json', 'r') as f:
+    api_key = json.load(f)['api_key']
+
+params = "&method=target_code&q="
+wordList = []
+
 def checkWords(url):
     res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
@@ -8,6 +15,10 @@ def checkWords(url):
     # 단어 존재 유무 확인
     check = soup.find('total')
     if check is None or check.get_text() == '0':
+        with open('wordList.txt', 'a', encoding='utf-8') as f:
+            for word in wordList:
+                f.write(word+'\n')
+        wordList = []
         return (-1, "")
     
     # 단어 유형 파악
@@ -34,23 +45,15 @@ def checkWords(url):
     else:
         return (0, word)
 
-api_key = ""
-with open('./config/keys.json', 'r') as f:
-    api_key = json.load(f)['api_key']
-
-params = "&method=target_code&q="
-wordList = []
-
 # API 문서의 500000번째 index까지 조회
-for i in range(1, 500000):
-    url = "https://opendict.korean.go.kr/api/view?key=" + \
-        api_key + params + str(i)
+for i in range(1, 250001):
+    url = "https://opendict.korean.go.kr/api/view?key=" + api_key + params + str(i)
     checkRes, word = checkWords(url)
     if checkRes == 0 and word not in wordList:
         print(word)
         wordList.append(word)
 
-f = open('wordList.txt', 'w')
+f = open('wordList.txt', 'a')
 for word in wordList:
     f.write(word)
 f.close()
