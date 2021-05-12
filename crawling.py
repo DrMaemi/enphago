@@ -9,6 +9,7 @@ params = "&method=target_code&q="
 wordList = []
 
 def checkWords(url):
+    global wordList
     res = requests.get(url)
     soup = BeautifulSoup(res.content, 'html.parser')
 
@@ -19,6 +20,7 @@ def checkWords(url):
             for word in wordList:
                 f.write(word+'\n')
         wordList = []
+        print("API로 받아온 단어 존재x. 누적된 " + str(len(wordList)) + "개 단어 저장 완료.")
         return (-1, "")
     
     # 단어 유형 파악
@@ -46,7 +48,7 @@ def checkWords(url):
         return (0, word)
 
 # API 문서의 500000번째 index까지 조회
-for i in range(1, 250001):
+for i in range(1, 2):
     url = "https://opendict.korean.go.kr/api/view?key=" + api_key + params + str(i)
     checkRes, word = checkWords(url)
     if checkRes == 0 and word not in wordList:
@@ -55,7 +57,7 @@ for i in range(1, 250001):
 
 f = open('wordList.txt', 'a')
 for word in wordList:
-    f.write(word)
+    f.write(word+'\n')
 f.close()
 
-print(str(len(wordList)) + "개의 단어가 준비되었습니다.")
+print("누적된 나머지 " + str(len(wordList)) + "개 단어 저장 완료.")
