@@ -19,8 +19,8 @@ def checkWords(url):
         with open('wordList.txt', 'a', encoding='utf-8') as f:
             for word in wordList:
                 f.write(word+'\n')
-        wordList = []
         print("API로 받아온 단어 존재x. 누적된 " + str(len(wordList)) + "개 단어 저장 완료.")
+        wordList = []
         return (-1, "")
     
     # 단어 유형 파악
@@ -48,7 +48,7 @@ def checkWords(url):
         return (0, word)
 
 # API 문서의 500000번째 index까지 조회
-for i in range(1, 2):
+for i in range(50010, 50010):
     url = "https://opendict.korean.go.kr/api/view?key=" + api_key + params + str(i)
     checkRes, word = checkWords(url)
     if checkRes == 0 and word not in wordList:
